@@ -71,8 +71,7 @@ def file_dependencies(filename, objdump):
 	try:
 		result = []
 		for line in cmd.stdout:
-			m = DLL_NAME_RE.match(line.decode())
-			if m:
+			if m := DLL_NAME_RE.match(line.decode()):
 				dll = m.group(1)
 				if dll.lower() not in WIN32_DLLS:
 					result.append(dll)
@@ -91,8 +90,7 @@ def find_dll(filename, dll_paths):
 		if os.path.exists(full_path):
 			return full_path
 
-	raise IOError('DLL file %s not found in path: %s' % (
-		filename, dll_paths))
+	raise IOError(f'DLL file {filename} not found in path: {dll_paths}')
 
 def all_dependencies(filename, objdump, dll_paths):
 	"""Recursively find all dependencies of the given executable file.
@@ -108,7 +106,7 @@ def all_dependencies(filename, objdump, dll_paths):
 	"""
 	result, missing = set(), set()
 	to_process = {filename}
-	while len(to_process) > 0:
+	while to_process:
 		filename = to_process.pop()
 		for dll in file_dependencies(filename, objdump):
 			try:
